@@ -44,28 +44,35 @@ namespace _20101_SAVRIKOV_1
         {
             List<Student> resultStudents = new List<Student>();
 
-            Student student = new Student();
             string firstName = "Андрей";
             string lastName = "Комаров";
 
-            student = DataBaseHelper.GetContext().Student.Where(s => s.FirstName == firstName && s.LastName == lastName).FirstOrDefault(); //Поиск студента по имени и фамилии
+            try
+            {
+                resultStudents = DataBaseHelper.GetContext().Student.Where(s => s.FirstName == firstName && s.LastName == lastName).ToList(); //Поиск студентов по имени и фамилии
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
-            if(student == null) //Если студент не найдется
+            if(resultStudents.Count == 0) //Если студентов не найдется
             {
                 MessageBox.Show($"Студента {firstName} {lastName} не найдено");
                 return;
             }
             
-            resultStudents.Add(student);
-            LoadData.ItemsSource = students;
+            LoadData.ItemsSource = resultStudents;
         }
 
         private void btnSort_Click(object sender, RoutedEventArgs e)
         {
             List<Student> sortStudents = new List<Student>();
-            //sortStudents = DataBaseHelper.GetContext().Student.OrderBy(s => s.IdStudent).ToList();
-            sortStudents = DataBaseHelper.GetContext().Student.OrderBy(s => s.LastName).ToList();
-            sortStudents.Reverse();
+
+            sortStudents = DataBaseHelper.GetContext().Student.OrderBy(s => s.LastName).ToList(); //Сортировка по фамилии (по алфавиту)
+            sortStudents.Reverse(); //сортировка по алфавиту по убыванию
+
             LoadData.ItemsSource = sortStudents;
         }
     }
